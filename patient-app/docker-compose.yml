@@ -1,0 +1,32 @@
+version: '3.8'
+
+services:
+  db:
+    image: mysql:8.0
+    container_name: mysql_db
+    environment:
+      MYSQL_ROOT_PASSWORD: root_password
+      MYSQL_DATABASE: grails_db
+      MYSQL_USER: grails_user
+      MYSQL_PASSWORD: grails_password
+    ports:
+      - "3307:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: patient_app
+    environment:
+      DATABASE_URL: jdbc:mysql://db:3306/grails_db
+      DATABASE_USERNAME: grails_user
+      DATABASE_PASSWORD: grails_password
+    ports:
+      - "8000:8080"
+    depends_on:
+      - db
+
+volumes:
+  mysql_data:
